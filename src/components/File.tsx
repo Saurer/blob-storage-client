@@ -1,6 +1,8 @@
 import { css } from '@emotion/core';
 import classNames from 'classnames';
 import { useCallback } from 'react';
+import Image from './Image';
+import resolveAsset from '../lib/resolveAsset';
 
 const previewFiles = ['png', 'jpg'];
 
@@ -26,6 +28,7 @@ const style = css`
     border: dotted 1px transparent;
     cursor: pointer;
     outline: 0;
+    vertical-align: top;
 
     &:hover {
         border-color: #ccc;
@@ -37,14 +40,12 @@ const style = css`
     }
 
     .file__icon {
+        font-size: 0;
         margin-bottom: 6px;
-        font-size: 40px;
+    }
 
-        img {
-            width: 40px;
-            height: 40px;
-            vertical-align: top;
-        }
+    .file__icon__default {
+        font-size: 40px;
     }
 
     .file__title {
@@ -78,19 +79,27 @@ const File: React.FC<Props> = props => {
         extension && -1 !== previewFiles.indexOf(extension)
     );
 
+    const defaultIcon = (
+        <em
+            className={classNames(
+                'file__icon__default',
+                'fiv-sqo',
+                `fiv-icon-${getExtension(props.name)}`
+            )}
+        />
+    );
+
     return (
         <button css={style} onClick={handleClick} className={className}>
             <div className="file__icon">
                 {showPreview ? (
-                    <img
-                        src={`https://saurer.blob.core.windows.net/default/${props.name}`}
+                    <Image
+                        size={40}
+                        src={resolveAsset(props.name)}
+                        errorComponent={defaultIcon}
                     />
                 ) : (
-                    <em
-                        className={`fiv-sqo fiv-icon-${getExtension(
-                            props.name
-                        )}`}
-                    />
+                    defaultIcon
                 )}
             </div>
             <div className="file__title">{props.name}</div>
